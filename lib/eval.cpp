@@ -1,19 +1,15 @@
 #include <iostream>
 #include <string>
+#include "eval-errors.cpp"
 using namespace std;
 
-/*
-	const char ADD = '+';
-	const char SUB = '-';
-	const char MUL = '*';
-	const char DIV = '/';
-*/
+/* HEADERS */
 
-// HEADERS
-
+// public
 int parseString(string s);
-int parse(string s, int &currentIndex, int endIndex, bool insideParens);
 
+// private
+int parse(string s, int &currentIndex, int endIndex, bool insideParens);
 int getInteger(string s, int &currentIndex, int endIndex);
 
 int eval(int a, char oper, int b);
@@ -22,11 +18,7 @@ int subtract(int a, int b);
 int multiply(int a, int b);
 int divide(int a, int b);
 
-const int PARSE_ERROR = 1;
-int errorCharacter = 0;
-string errorMessage = "";
-
-
+/* CODE */
 
 int parseString(string s) {
 	int currentIndex = 0;
@@ -90,9 +82,7 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 					expected = OPERATOR;
 				}
 				else if (expected == OPERATOR) {
-					errorCharacter = currentIndex;
-					errorMessage = "Unexpected integer (did you add an unecessary space, or forget to add an operator between them?)";
-					throw PARSE_ERROR;
+					throw ParseError::unexpectedInteger(currentIndex);
 				}
 				break;
 			
@@ -126,14 +116,10 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 			case '/':
 				//cout << "Found operator " << c << endl;
 				if (expected == LEFT) {
-					errorCharacter = currentIndex;
-					errorMessage = string() + "A number is required before the " + c + " operator";
-					throw PARSE_ERROR;
+					throw ParseError::expectedNumberBeforeOperator(currentIndex, c);
 				}
 				if (expected == RIGHT) {
-					errorCharacter = currentIndex;
-					errorMessage = string() + "Unexpected operator " + c;
-					throw PARSE_ERROR;
+					throw ParseError::unexpectedOperator(currentIndex, c);
 				}
 				else if (expected == OPERATOR) {
 					currentOperator = c;
@@ -159,9 +145,7 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 					
 					expected = OPERATOR;
 				} else if (expected == OPERATOR) {
-					errorCharacter = currentIndex;
-					errorMessage = string() + "Unexpected parentheses (expecting an operator instead)";
-					throw PARSE_ERROR;
+					throw ParseError::unexpectedParentheses(currentIndex);
 				}
 				break;
 				
@@ -169,30 +153,22 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 				//cout << "Closing paren found at " << currentIndex << endl;
 				if (insideParens) {
 					if (expected == LEFT) {
-						errorCharacter = currentIndex;
-						errorMessage = "Nothing inside the parentheses";
-						throw PARSE_ERROR;
+						throw ParseError::emptyParantheses(currentIndex);
 					}
 					else if (expected == OPERATOR) {
 						currentIndex++;
 						return leftPolarity * leftInteger;
 					}
 					else if (expected == RIGHT) {
-						errorCharacter = currentIndex;
-						errorMessage = "Missing integer after operator";
-						throw PARSE_ERROR;
+						throw ParseError::expectedNumberAfterOperator(currentIndex, currentOperator);
 					}
 				} else {
-					errorCharacter = currentIndex;
-					errorMessage = "Closing parentheses found without a matching opening parentheses";
-					throw PARSE_ERROR;
+					throw ParseError::unexpectedClosingParantheses(currentIndex);
 				}
 				break;
 			
 			default:
-				errorCharacter = currentIndex;
-				errorMessage = string() + "Unexpected character " + c;
-				throw PARSE_ERROR;
+				throw ParseError::unexpectedCharacter(currentIndex, c);
 				break;
 		}
 		
@@ -204,32 +180,22 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 	
 	// All out of string
 	if (insideParens) {
-		errorCharacter = currentIndex;
-		errorMessage = "Missing closing parentheses";
-		throw PARSE_ERROR;
+		throw ParseError::expectedClosingParantheses(currentIndex);
 	}
 	
 	if (expected == LEFT) {
-		errorCharacter = currentIndex;
-		errorMessage = "No text to parse";
-		throw PARSE_ERROR;
+		throw ParseError::noData(currentIndex);
 	}
 	else if (expected == OPERATOR) {
 		// This is how it should end!
 		return leftPolarity * leftInteger;
 	}
 	else if (expected == RIGHT) {
-		errorCharacter = currentIndex;
-		errorMessage = "Missing integer after operator";
-		throw PARSE_ERROR;
+		throw ParseError::expectedNumberAfterOperator(currentIndex, currentOperator);
 	}
 	
-	
 	// If this ever gets returned, something seriously f**ed up.
-	errorCharacter = currentIndex;
-	errorMessage = "Something done goofed. I have no idea why this error happened.";
-	throw PARSE_ERROR;
-	
+	throw Error(ID, "Something done goofed. I have no idea why this error happened.");
 	return -1;
 }
 
@@ -267,9 +233,7 @@ int getInteger(string s, int &currentIndex, int endIndex) {
 	}
 	
 	if (currentInteger == "") {
-		errorCharacter = currentIndex;
-		errorMessage = string() + "Unexpected character " + c;
-		throw PARSE_ERROR;
+		throw ParseError::unexpectedCharacter(currentIndex, c);
 	}
 	
 	try {
@@ -277,9 +241,7 @@ int getInteger(string s, int &currentIndex, int endIndex) {
 		return stoi(currentInteger);
 	} //catch (const std::out_of_range& oor) {
 	catch (...) {
-		errorCharacter = currentIndex;
-		errorMessage = string() + "The number '" + currentInteger + "' is much too big!";
-		throw PARSE_ERROR;
+		throw MathError::integerTooLarge(currentIndex, currentInteger);
 	}
 	
 
@@ -296,9 +258,7 @@ int eval(int a, char oper, int b) {
 		case '/': return divide(a, b);
 		
 		default:
-			errorCharacter = -1;
-			errorMessage = string() + "Unknown operator " + oper;
-			throw PARSE_ERROR;
+			throw ParseError::unknownOperator(-1, oper);
 	}
 }
 
@@ -316,14 +276,10 @@ int multiply(int a, int b) {
 
 int divide(int a, int b) {
 	if (b == 0) {
-		errorCharacter = -1;
-		errorMessage = string() + "The operation '" + to_string(a) + "/" + to_string(b) + "' would result in a non-integer number";
-		throw PARSE_ERROR;
+		throw MathError::divisionByZero(-1);
 	}
 	if (a % b != 0) {
-		errorCharacter = -1;
-		errorMessage = "Cannot divide by zero!";
-		throw PARSE_ERROR;
+		throw MathError::nonIntegerDivision(-1, a, b);
 	}
 	
 	return a / b; // Already does integer division

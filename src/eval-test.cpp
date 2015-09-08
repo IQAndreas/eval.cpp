@@ -17,18 +17,12 @@ int main() {
 			cout << "Enter a calculation: ";
 		}
 	
-	} catch (int e) {
-		
-		if (errorCharacter >= 0) {
-			// 21 is the size of the "header"
-			cout << string(errorCharacter+21, ' ') << "^" << endl;
-			cout << "Error at #" << errorCharacter+1 << ": ";
-		} else {
-			cout << "Error: ";
-		}
-		
-		cout << errorMessage << endl;
-		return 1;
+	} catch (ParseError& e) {
+		e.print(21);
+	} catch (MathError& e) {
+		e.print(21);
+	} catch (Error& e) {
+		e.print();
 	}
 	
 
