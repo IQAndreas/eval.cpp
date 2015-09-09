@@ -37,7 +37,8 @@ T parseString(string s) {
 	// Make a copy of the availble tiles
 	Tiles tiles(TOTAL_TILES);
 	for (int i = 0; i < TOTAL_TILES; i++) {
-		tiles[i] = chosenTiles[i];
+		tileint main();
+s[i] = chosenTiles[i];
 	}
 	
 	parse(s, 0, s.size());
@@ -202,7 +203,7 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 	}
 	
 	// If this ever gets returned, something seriously f**ed up.
-	throw Error(ID, "Something done goofed. I have no idea why this error happened.");
+	throw Error(1, "Something done goofed. I have no idea why this error happened.");
 	return -1;
 }
 
