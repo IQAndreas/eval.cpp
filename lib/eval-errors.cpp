@@ -37,11 +37,11 @@ class MathError : public Error {
 		virtual void print(int headerLength) {
 			if (this->index >= 0) {
 				cerr << string(headerLength + this->index, ' ') << pointerChar << endl;
-				cerr << this->type + " at #" << this->index + 1 << ": ";
+				cerr << "\033[0;31m" << this->type + " at #" << this->index + 1 << ": ";
 			} else {
-				cerr << this->type + ": ";
+				cerr << "\033[0;31m" << this->type + ": ";
 			}
-			cerr << this->message << endl;
+			cerr << this->message << "\033[0m" << endl;
 		}
 		
 		static MathError integerTooLarge(int index, string integerValue) {
@@ -52,7 +52,10 @@ class MathError : public Error {
 			return MathError(ID, index, string() + "Cannot divide by zero!");
 		}
 		static MathError nonIntegerDivision(int index, int a, int b) {
-			return MathError(ID, index, string() + "The operation '" + to_string(a) + "/" + to_string(b) + "' would result in a non-integer number");
+			return MathError(ID, index, string() + "Floats are currently not allowed. The operation '" + to_string(a) + "/" + to_string(b) + "' would result in a non-integer number");
+		}
+		static MathError nonIntegerDivision(int index) {
+			return MathError(ID, index, string() + "Floats are currently not allowed. The values must be integers");
 		}
 };
 
@@ -70,11 +73,11 @@ class ParseError : public Error {
 		virtual void print(int headerLength) {
 			if (this->index >= 0) {
 				cerr << string(headerLength + this->index, ' ') << pointerChar << endl;
-				cerr << this->type + " at #" << this->index + 1 << ": ";
+				cerr << "\033[0;31m" << this->type + " at #" << this->index + 1 << ": ";
 			} else {
-				cerr << this->type + ": ";
+				cerr << "\033[0;31m" << this->type + ": ";
 			}
-			cerr << this->message << endl;
+			cerr << this->message << "\033[0m" << endl;
 		}
 		
 		static ParseError noData(int index) {

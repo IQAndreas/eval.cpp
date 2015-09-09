@@ -6,23 +6,30 @@ using namespace std;
 /* HEADERS */
 
 // public
-int parseString(string s);
+template <class T> T parseString(string s);
 
 // private
-int parse(string s, int &currentIndex, int endIndex, bool insideParens);
-int getInteger(string s, int &currentIndex, int endIndex);
+template <class T> T parse(string s, int &currentIndex, int endIndex, bool insideParens);
+template <class T> T getNumber(string s, int &currentIndex, int endIndex);
 
-int eval(int a, char oper, int b);
-int add(int a, int b);
-int subtract(int a, int b);
-int multiply(int a, int b);
-int divide(int a, int b);
+// Not sure how to handle templates in header
+template <class A, class B> A eval(A a, char oper, B b);
+template <class A, class B> A add(A a, B b);
+template <class A, class B> A subtract(A a, B b);
+template <class A, class B> A multiply(A a, B b);
+template <class A, class B> A divide(A a, B b);
+
+// Specialized templates
+//template <> float getNumber(string s, int &currentIndex, int endIndex);
+//template <> int getNumber(string s, int &currentIndex, int endIndex);
+template <> int divide(int a, int b);
 
 /* CODE */
 
-int parseString(string s) {
+template <class T>
+T parseString(string s) {
 	int currentIndex = 0;
-	return parse(s, currentIndex, s.size(), false);
+	return parse<T>(s, currentIndex, s.size(), false);
 }
 
 /*int parse(string s) {
@@ -36,18 +43,19 @@ int parseString(string s) {
 	parse(s, 0, s.size());
 }*/
 
-int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
+template <class T>
+T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 	
 	const int LEFT = 1;
 	const int OPERATOR = 2;
 	const int RIGHT = 3;
 	int expected = LEFT;
 	
-	int leftPolarity = 1;
-	int leftInteger = 0;
+	T leftPolarity = 1;
+	T leftValue = 0;
 	char currentOperator;
-	int rightPolarity = 1;
-	int rightInteger = 0;
+	T rightPolarity = 1;
+	T rightValue = 0;
 	
 	//for(char& c : str) {
 	while(currentIndex < endIndex) {
@@ -72,13 +80,13 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 			case '8':
 			case '9':
 				if (expected == LEFT) {
-					leftInteger = getInteger(s, currentIndex, endIndex);
+					leftValue = getNumber<T>(s, currentIndex, endIndex);
 					expected = OPERATOR;
 				}
 				else if (expected == RIGHT) {
-					rightInteger = getInteger(s, currentIndex, endIndex);
-					leftInteger = eval(leftPolarity * leftInteger, currentOperator, rightPolarity * rightInteger);
-					//cout << "Evaluated to " << leftInteger << endl;
+					rightValue = getNumber<T>(s, currentIndex, endIndex);
+					leftValue = eval(leftPolarity * leftValue, currentOperator, rightPolarity * rightValue);
+					//cout << "Evaluated to " << leftValue << endl;
 					expected = OPERATOR;
 				}
 				else if (expected == OPERATOR) {
@@ -111,7 +119,6 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 				}
 				break;
 			
-			 // Can be used for polarity, but why bother? Just throw an error message instead.
 			case '*':
 			case '/':
 				//cout << "Found operator " << c << endl;
@@ -132,15 +139,15 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 				//cout << "Opening paren found at " << currentIndex << endl;
 				if (expected == LEFT) {
 					currentIndex++;
-					leftInteger = parse(s, currentIndex, endIndex, true);
-					//cout << "Result of parens was " << leftInteger << endl;
+					leftValue = parse<T>(s, currentIndex, endIndex, true);
+					//cout << "Result of parens was " << leftValue << endl;
 					//cout << " Now at " << currentIndex << endl;
 					expected = OPERATOR;
 				} else if (expected == RIGHT) {
 					currentIndex++;
-					rightInteger = parse(s, currentIndex, endIndex, true);
-					leftInteger = eval(leftPolarity * leftInteger, currentOperator, rightPolarity * rightInteger);
-					//cout << "Result of parens was " << rightInteger << endl;
+					rightValue = parse<T>(s, currentIndex, endIndex, true);
+					leftValue = eval(leftPolarity * leftValue, currentOperator, rightPolarity * rightValue);
+					//cout << "Result of parens was " << rightValue << endl;
 					//cout << " Now at " << currentIndex << endl;
 					
 					expected = OPERATOR;
@@ -157,7 +164,7 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 					}
 					else if (expected == OPERATOR) {
 						currentIndex++;
-						return leftPolarity * leftInteger;
+						return leftPolarity * leftValue;
 					}
 					else if (expected == RIGHT) {
 						throw ParseError::expectedNumberAfterOperator(currentIndex, currentOperator);
@@ -173,9 +180,9 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 		}
 		
 		//cout << currentIndex << "Lets' go again. Now expecting: " << expected << endl;
-		//cout << currentIndex << "  left: " << leftPolarity * leftInteger << endl;
+		//cout << currentIndex << "  left: " << leftPolarity * leftValue << endl;
 		//cout << currentIndex << "  operator: " << currentOperator << endl;
-		//cout << currentIndex << "  right: " << rightPolarity * rightInteger << endl;
+		//cout << currentIndex << "  right: " << rightPolarity * rightValue << endl;
 	}
 	
 	// All out of string
@@ -188,7 +195,7 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 	}
 	else if (expected == OPERATOR) {
 		// This is how it should end!
-		return leftPolarity * leftInteger;
+		return leftPolarity * leftValue;
 	}
 	else if (expected == RIGHT) {
 		throw ParseError::expectedNumberAfterOperator(currentIndex, currentOperator);
@@ -199,12 +206,13 @@ int parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 	return -1;
 }
 
-int getInteger(string s, int &currentIndex, int endIndex) {
+template <class T>
+T getNumber(string s, int &currentIndex, int endIndex) {
 	
-	//cout << "__getInteger(" << currentIndex << ", " << endIndex << ")__" << endl;
+	//cout << "__getNumber(" << currentIndex << ", " << endIndex << ")__" << endl;
 	
 	bool done = false;
-	string currentInteger = "";
+	string currentValue = "";
 	char c;
 	while(!done && (currentIndex < endIndex)) {
 		c = s[currentIndex];
@@ -220,7 +228,7 @@ int getInteger(string s, int &currentIndex, int endIndex) {
 			case '7':
 			case '8':
 			case '9':
-				currentInteger += c;
+				currentValue += c;
 				currentIndex++;
 				break;
 			case '+':
@@ -232,16 +240,16 @@ int getInteger(string s, int &currentIndex, int endIndex) {
 		}
 	}
 	
-	if (currentInteger == "") {
+	if (currentValue == "") {
 		throw ParseError::unexpectedCharacter(currentIndex, c);
 	}
 	
 	try {
-		//cout << "__returned:" << stoi(currentInteger) << endl;
-		return stoi(currentInteger);
+		//cout << "__returned:" << stoi(currentValue) << endl;
+		return stoi(currentValue);
 	} //catch (const std::out_of_range& oor) {
 	catch (...) {
-		throw MathError::integerTooLarge(currentIndex, currentInteger);
+		throw MathError::integerTooLarge(currentIndex, currentValue);
 	}
 	
 
@@ -249,32 +257,48 @@ int getInteger(string s, int &currentIndex, int endIndex) {
 
 // 1: Division by 0 is forbidden
 // 2: a must be divisible by b
-int eval(int a, char oper, int b) {
+template <class A, class B>
+A eval(A a, char oper, B b) {
 	//cout << "__eval(" << a << ", " << oper << ", " << b << ")__" << endl;
 	switch (oper) {
-		case '+': return add(a, b);
-		case '-': return subtract(a, b);
-		case '*': return multiply(a, b);
-		case '/': return divide(a, b);
+		case '+': return add<A,B>(a, b);
+		case '-': return subtract<A,B>(a, b);
+		case '*': return multiply<A,B>(a, b);
+		case '/': return divide<A,B>(a, b);
+		//case '^': return xor_oper<A,B>(a, b);
+		//case '%': return modulus<A,B>(a, b);
 		
 		default:
 			throw ParseError::unknownOperator(-1, oper);
 	}
 }
 
-int add(int a, int b) {
+template <class A, class B>
+A add(A a, B b) {
 	return a + b;
 }
 
-int subtract(int a, int b) {
+template <class A, class B>
+A subtract(A a, B b) {
 	return a - b;
 }
 
-int multiply(int a, int b) {
+template <class A, class B>
+A multiply(A a, B b) {
 	return a * b;
 }
 
-int divide(int a, int b) {
+template <class A, class B>
+A divide(A a, B b) {
+	if (b == 0) {
+		throw MathError::divisionByZero(-1);
+	}
+	
+	return a / b;
+}
+
+template <>
+int divide<int,int>(int a, int b) {
 	if (b == 0) {
 		throw MathError::divisionByZero(-1);
 	}
@@ -284,5 +308,7 @@ int divide(int a, int b) {
 	
 	return a / b; // Already does integer division
 }
+
+
 
 

@@ -10,7 +10,7 @@ int main() {
 		string input;
 		while (getline(cin, input)) {
 		
-			int result = parseString(input);
+			int result = parseString<int>(input);
 			cout << " > " << result << endl;
 		
 			// And all over again
