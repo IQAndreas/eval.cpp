@@ -56,6 +56,9 @@ class MathError : public Error {
 		static MathError integerTooLarge(int index, string integerValue) {
 			return MathError(index, string() + "The number '" + integerValue + "' is much too big!");
 		}
+		static MathError floatDetected(int index) {
+			return MathError(index, string() + "Floats are currently not allowed. The placement of this period would result in a non-integer number");
+		}
 		
 		static MathError divisionByZero(int index) {
 			return MathError(index, string() + "Cannot divide by zero!");

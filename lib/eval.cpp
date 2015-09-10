@@ -80,6 +80,7 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 			case '7':
 			case '8':
 			case '9':
+			case '.':
 				if (expected == LEFT) {
 					leftValue = getNumber<T>(s, currentIndex, endIndex);
 					expected = OPERATOR;
@@ -232,6 +233,9 @@ T getNumber(string s, int &currentIndex, int endIndex) {
 				currentValue += c;
 				currentIndex++;
 				break;
+				
+			case '.':
+				throw MathError::floatDetected(currentIndex);
 				
 			// Right now these are being handled outside of this function
 			//  by using the 'leftPolarity' and 'rightPolarity' multipliers
