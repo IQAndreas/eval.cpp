@@ -5,14 +5,14 @@ using namespace std;
 
 /* CONSTANTS */
 
-const string PROJECT_URL = "https://github.com/IQAndreas/eval.cpp/issues";
+const std::string PROJECT_URL = "https://github.com/IQAndreas/eval.cpp/issues";
 
 /* HEADERS */
 
 int main(int argc, char *argv[]);
 
 int interactiveMode();
-int commandLineMode(string input);
+int commandLineMode(std::string input);
 
 void sigint(int sig);
 void unknownError();
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 		
 		// Join all arguments, ignoring spaces
 		// EDIT: Ignore the first argument. Is value is 'bin/eval-test'
-		string input = "";
+		std::string input = "";
 		for (int i = 1; i < argc; i++) {
 			input += argv[i];
 		}
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 	}
 }
 
-int commandLineMode(string input) {
+int commandLineMode(std::string input) {
 
 	try {
 		
@@ -68,10 +68,10 @@ int commandLineMode(string input) {
 
 int interactiveMode() {
 	
-	const string INPUT_LINE = "Enter a calculation: ";
-	const string INPUT_LINE_END = "";
-	const string OUTPUT_LINE = "\033[1;93m > ";
-	const string OUTPUT_LINE_END = "\033[0m";
+	const std::string INPUT_LINE = "Enter a calculation: ";
+	const std::string INPUT_LINE_END = "";
+	const std::string OUTPUT_LINE = "\033[1;93m > ";
+	const std::string OUTPUT_LINE_END = "\033[0m";
 	
 	// Used for debugging when displaying the error message
 	const int INPUT_LINE_LENGTH = 21;
@@ -82,7 +82,7 @@ int interactiveMode() {
 		signal(SIGINT, sigint);
 		
 		cout << INPUT_LINE;
-		string input = "";
+		std::string input = "";
 		while (getline(cin, input)) {
 			
 			cout << INPUT_LINE_END;
