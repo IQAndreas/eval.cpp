@@ -1,1 +1,3 @@
 bin
+server/logs
+server/eval-server
