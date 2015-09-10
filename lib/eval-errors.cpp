@@ -27,6 +27,9 @@ class Error {
 		virtual void print() {
 			cerr << this->message << endl;
 		}
+		virtual void print(ostream& out) {
+			out << this->message << endl;
+		}
 };
 
 //const char POINTER_CHAR = '^';
@@ -41,19 +44,22 @@ class MathError : public Error {
 		}
 		
 		virtual void print() {
-			if (this->index >= 0) {
-				cerr << "\033[0;31m" << this->type << " at character #" << this->index + 1 << ": ";
-			} else {
-				cerr << "\033[0;31m" << this->type << ": ";
-			}
-			cerr << this->message << "\033[0m" << endl;
+			this->print(cerr);
 		}
-		virtual void print(int headerLength) {
+		virtual void print(ostream& out) {
+			if (this->index >= 0) {
+				out << "\033[0;31m" << this->type << " at character #" << this->index + 1 << ": ";
+			} else {
+				out << "\033[0;31m" << this->type << ": ";
+			}
+			out << this->message << "\033[0m" << endl;
+		}
+		virtual void print(ostream& out, int headerLength) {
 			if (this->index >= 0) {
 				// Show a cursor right under the character in question
-				cerr << string(headerLength + this->index, ' ') << POINTER_CHAR << endl;
+				out << string(headerLength + this->index, ' ') << POINTER_CHAR << endl;
 			}
-			this->print();
+			this->print(out);
 		}
 		
 		static MathError integerTooLarge(int index, string integerValue) {
@@ -83,19 +89,22 @@ class ParseError : public Error {
 		}
 		
 		virtual void print() {
-			if (this->index >= 0) {
-				cerr << "\033[0;31m" << this->type << " at character #" << this->index + 1 << ": ";
-			} else {
-				cerr << "\033[0;31m" << this->type << ": ";
-			}
-			cerr << this->message << "\033[0m" << endl;
+			this->print(cerr);
 		}
-		virtual void print(int headerLength) {
+		virtual void print(ostream& out) {
+			if (this->index >= 0) {
+				out << "\033[0;31m" << this->type << " at character #" << this->index + 1 << ": ";
+			} else {
+				out << "\033[0;31m" << this->type << ": ";
+			}
+			out << this->message << "\033[0m" << endl;
+		}
+		virtual void print(ostream& out, int headerLength) {
 			if (this->index >= 0) {
 				// Show a cursor right under the character in question
-				cerr << string(headerLength + this->index, ' ') << POINTER_CHAR << endl;
+				out << string(headerLength + this->index, ' ') << POINTER_CHAR << endl;
 			}
-			this->print();
+			this->print(out);
 		}
 		
 		static ParseError noData(int index) {
@@ -137,6 +146,5 @@ class ParseError : public Error {
 		}
 		
 };
-
 
 

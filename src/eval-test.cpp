@@ -48,14 +48,14 @@ int commandLineMode(string input) {
 	
 	} catch (ParseError& e) {
 		cerr << input << endl;
-		e.print(0);
+		e.print(cerr, 0);
 		exit (e.id);
 	} catch (MathError& e) {
 		cerr << input << endl;
-		e.print(0);
+		e.print(cerr, 0);
 		exit (e.id);
 	} catch (Error& e) {
-		e.print();
+		e.print(cerr);
 		exit (e.id);
 	} catch (...) {
 		unknownError();
@@ -95,13 +95,13 @@ int interactiveMode() {
 		}
 	
 	} catch (ParseError& e) {
-		e.print(INPUT_LINE_LENGTH);
+		e.print(cerr, INPUT_LINE_LENGTH);
 		exit (e.id);
 	} catch (MathError& e) {
-		e.print(INPUT_LINE_LENGTH);
+		e.print(cerr, INPUT_LINE_LENGTH);
 		exit (e.id);
 	} catch (Error& e) {
-		e.print();
+		e.print(cerr);
 		exit (e.id);
 	} catch (...) {
 		unknownError();
