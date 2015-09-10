@@ -232,8 +232,11 @@ T getNumber(string s, int &currentIndex, int endIndex) {
 				currentValue += c;
 				currentIndex++;
 				break;
-			case '+':
-			case '-':
+				
+			// Right now these are being handled outside of this function
+			//  by using the 'leftPolarity' and 'rightPolarity' multipliers
+			//case '+':
+			//case '-':
 				
 			default:
 				done = true;
