@@ -33,6 +33,7 @@ class Error {
 
 //const char POINTER_CHAR = '^';
 const std::string POINTER_CHAR = "↑";
+const std::string NEWLINE = "\n    "; // If an error message continues on a second line
 
 class MathError : public Error {
 	public:
@@ -65,17 +66,14 @@ class MathError : public Error {
 			return MathError(index, std::string() + "The number '" + integerValue + "' is much too big!");
 		}
 		static MathError floatDetected(int index) {
-			return MathError(index, std::string() + "Floats are currently not allowed. The placement of this period would result in a non-integer number");
+			return MathError(index, std::string() + "Floats are currently not allowed." + NEWLINE + "(The placement of this period would result in a non-integer number)");
 		}
 		
 		static MathError divisionByZero(int index) {
 			return MathError(index, std::string() + "Cannot divide by zero!");
 		}
 		static MathError nonIntegerDivision(int index, int a, int b) {
-			return MathError(index, std::string() + "Floats are currently not allowed. The operation '" + std::to_string(a) + "/" + std::to_string(b) + "' would result in a non-integer number");
-		}
-		static MathError nonIntegerDivision(int index) {
-			return MathError(index, std::string() + "Floats are currently not allowed. The values must be integers");
+			return MathError(index, std::string() + "Floats are currently not allowed." + NEWLINE + "(The operation '" + std::to_string(a) + "/" + std::to_string(b) + "' would result in a non-integer number)");
 		}
 };
 
@@ -117,14 +115,17 @@ class ParseError : public Error {
 		static ParseError unexpectedCharacter(int index, char character) {
 			return ParseError(index, std::string() + "Unexpected character " + character);
 		}
+		static ParseError unexpectedComma(int index) {
+			return ParseError(index, std::string() + "Unexpected comma" + NEWLINE + "(Is it used as a thousand's separator? Please remove it)" + NEWLINE + "(Is it used as a decimal point? This is 'murica! We don't do silly things like that here.)");
+		}
 		static ParseError unexpectedInteger(int index) {
-			return ParseError(index, std::string() + "Unexpected integer (did you add an unecessary space, or forget to add an operator between them?)");
+			return ParseError(index, std::string() + "Unexpected integer" + NEWLINE + "(Did you add an unecessary space, or forget to add an operator between them?)");
 		}
 		static ParseError unexpectedOperator(int index, char opr) {
 			return ParseError(index, std::string() + "Unexpected operator " + opr);
 		}
 		static ParseError unexpectedParentheses(int index) {
-			return ParseError(index, std::string() + "Unexpected parentheses (expecting an operator instead)");
+			return ParseError(index, std::string() + "Unexpected parentheses" + NEWLINE + "(expecting an operator instead)");
 		}
 		static ParseError unexpectedClosingParantheses(int index) {
 			return ParseError(index, std::string() + "Closing parentheses found without a matching opening parentheses");

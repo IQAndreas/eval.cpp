@@ -174,6 +174,10 @@ T parse(std::string s, int &currentIndex, int endIndex, bool insideParens) {
 					throw ParseError::unexpectedClosingParantheses(currentIndex);
 				}
 				break;
+				
+			case ',':
+				throw ParseError::unexpectedComma(currentIndex);
+				break;
 			
 			default:
 				throw ParseError::unexpectedCharacter(currentIndex, c);
@@ -232,9 +236,15 @@ T getNumber(std::string s, int &currentIndex, int endIndex) {
 				currentValue += c;
 				currentIndex++;
 				break;
-				
+			
+			// Technically these can be handled outside of the function,
+			//  but placing them here is more for future planning.
 			case '.':
 				throw MathError::floatDetected(currentIndex);
+				break;
+			case ',':
+				throw ParseError::unexpectedComma(currentIndex);
+				break;
 				
 			// Right now these are being handled outside of this function
 			//  by using the 'leftPolarity' and 'rightPolarity' multipliers
