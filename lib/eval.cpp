@@ -62,7 +62,7 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 	while(currentIndex < endIndex) {
 	
 		char c = s[currentIndex];
-		//cout << currentIndex << "\t" << c << endl;
+		//clog << currentIndex << "\t" << c << endl;
 		
 		switch (c) {
 			case ' ':
@@ -87,7 +87,7 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 				else if (expected == RIGHT) {
 					rightValue = getNumber<T>(s, currentIndex, endIndex);
 					leftValue = eval(leftPolarity * leftValue, currentOperator, rightPolarity * rightValue);
-					//cout << "Evaluated to " << leftValue << endl;
+					//clog << "Evaluated to " << leftValue << endl;
 					expected = OPERATOR;
 				}
 				else if (expected == OPERATOR) {
@@ -122,7 +122,7 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 			
 			case '*':
 			case '/':
-				//cout << "Found operator " << c << endl;
+				//clog << "Found operator " << c << endl;
 				if (expected == LEFT) {
 					throw ParseError::expectedNumberBeforeOperator(currentIndex, c);
 				}
@@ -137,19 +137,19 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 				break;
 				
 			case '(':
-				//cout << "Opening paren found at " << currentIndex << endl;
+				//clog << "Opening paren found at " << currentIndex << endl;
 				if (expected == LEFT) {
 					currentIndex++;
 					leftValue = parse<T>(s, currentIndex, endIndex, true);
-					//cout << "Result of parens was " << leftValue << endl;
-					//cout << " Now at " << currentIndex << endl;
+					//clog << "Result of parens was " << leftValue << endl;
+					//clog << " Now at " << currentIndex << endl;
 					expected = OPERATOR;
 				} else if (expected == RIGHT) {
 					currentIndex++;
 					rightValue = parse<T>(s, currentIndex, endIndex, true);
 					leftValue = eval(leftPolarity * leftValue, currentOperator, rightPolarity * rightValue);
-					//cout << "Result of parens was " << rightValue << endl;
-					//cout << " Now at " << currentIndex << endl;
+					//clog << "Result of parens was " << rightValue << endl;
+					//clog << " Now at " << currentIndex << endl;
 					
 					expected = OPERATOR;
 				} else if (expected == OPERATOR) {
@@ -158,7 +158,7 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 				break;
 				
 			case ')':
-				//cout << "Closing paren found at " << currentIndex << endl;
+				//clog << "Closing paren found at " << currentIndex << endl;
 				if (insideParens) {
 					if (expected == LEFT) {
 						throw ParseError::emptyParantheses(currentIndex);
@@ -180,10 +180,10 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 				break;
 		}
 		
-		//cout << currentIndex << "Lets' go again. Now expecting: " << expected << endl;
-		//cout << currentIndex << "  left: " << leftPolarity * leftValue << endl;
-		//cout << currentIndex << "  operator: " << currentOperator << endl;
-		//cout << currentIndex << "  right: " << rightPolarity * rightValue << endl;
+		//clog << currentIndex << "Lets' go again. Now expecting: " << expected << endl;
+		//clog << currentIndex << "  left: " << leftPolarity * leftValue << endl;
+		//clog << currentIndex << "  operator: " << currentOperator << endl;
+		//clog << currentIndex << "  right: " << rightPolarity * rightValue << endl;
 	}
 	
 	// All out of string
@@ -210,14 +210,14 @@ T parse(string s, int &currentIndex, int endIndex, bool insideParens) {
 template <class T>
 T getNumber(string s, int &currentIndex, int endIndex) {
 	
-	//cout << "__getNumber(" << currentIndex << ", " << endIndex << ")__" << endl;
+	//clog << "__getNumber(" << currentIndex << ", " << endIndex << ")__" << endl;
 	
 	bool done = false;
 	string currentValue = "";
 	char c;
 	while(!done && (currentIndex < endIndex)) {
 		c = s[currentIndex];
-		//cout << currentIndex << "\t" << c << endl;
+		//clog << currentIndex << "\t" << c << endl;
 		switch (c) {
 			case '0':
 			case '1':
@@ -246,7 +246,7 @@ T getNumber(string s, int &currentIndex, int endIndex) {
 	}
 	
 	try {
-		//cout << "__returned:" << stoi(currentValue) << endl;
+		//clog << "__returned:" << stoi(currentValue) << endl;
 		return stoi(currentValue);
 	} //catch (const std::out_of_range& oor) {
 	catch (...) {
@@ -260,7 +260,7 @@ T getNumber(string s, int &currentIndex, int endIndex) {
 // 2: a must be divisible by b
 template <class A, class B>
 A eval(A a, char oper, B b) {
-	//cout << "__eval(" << a << ", " << oper << ", " << b << ")__" << endl;
+	//clog << "__eval(" << a << ", " << oper << ", " << b << ")__" << endl;
 	switch (oper) {
 		case '+': return add<A,B>(a, b);
 		case '-': return subtract<A,B>(a, b);
