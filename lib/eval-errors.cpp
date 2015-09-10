@@ -29,8 +29,8 @@ class Error {
 		}
 };
 
-//const char pointerChar = '^';
-const string pointerChar = "↑";
+//const char POINTER_CHAR = '^';
+const string POINTER_CHAR = "↑";
 
 class MathError : public Error {
 	public:
@@ -41,16 +41,19 @@ class MathError : public Error {
 		}
 		
 		virtual void print() {
-			this->print(0);
+			if (this->index >= 0) {
+				cerr << "\033[0;31m" << this->type << " at character #" << this->index + 1 << ": ";
+			} else {
+				cerr << "\033[0;31m" << this->type << ": ";
+			}
+			cerr << this->message << "\033[0m" << endl;
 		}
 		virtual void print(int headerLength) {
 			if (this->index >= 0) {
-				cerr << string(headerLength + this->index, ' ') << pointerChar << endl;
-				cerr << "\033[0;31m" << this->type + " at #" << this->index + 1 << ": ";
-			} else {
-				cerr << "\033[0;31m" << this->type + ": ";
+				// Show a cursor right under the character in question
+				cerr << string(headerLength + this->index, ' ') << POINTER_CHAR << endl;
 			}
-			cerr << this->message << "\033[0m" << endl;
+			this->print();
 		}
 		
 		static MathError integerTooLarge(int index, string integerValue) {
@@ -80,16 +83,19 @@ class ParseError : public Error {
 		}
 		
 		virtual void print() {
-			this->print(0);
+			if (this->index >= 0) {
+				cerr << "\033[0;31m" << this->type << " at character #" << this->index + 1 << ": ";
+			} else {
+				cerr << "\033[0;31m" << this->type << ": ";
+			}
+			cerr << this->message << "\033[0m" << endl;
 		}
 		virtual void print(int headerLength) {
 			if (this->index >= 0) {
-				cerr << string(headerLength + this->index, ' ') << pointerChar << endl;
-				cerr << "\033[0;31m" << this->type + " at #" << this->index + 1 << ": ";
-			} else {
-				cerr << "\033[0;31m" << this->type + ": ";
+				// Show a cursor right under the character in question
+				cerr << string(headerLength + this->index, ' ') << POINTER_CHAR << endl;
 			}
-			cerr << this->message << "\033[0m" << endl;
+			this->print();
 		}
 		
 		static ParseError noData(int index) {

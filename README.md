@@ -1,5 +1,4 @@
-# The Magnificent Online
-# Command-line Calculator
+# The Magnificent Online Command-line Calculator
 
 Please help me to debug it by throwing everything you can 
  at it. If it returns a "readable" error message (such as
@@ -18,32 +17,45 @@ Submit bugs or ideas to the following GitHub repo:
 
    * Order of operations is ignored; everything is parsed
      from left to right, regardless of operator type.
-     (do you have any idea how hard tricky this is to do 
+     _(do you have any idea how hard tricky this is to do 
       elegantly and without repeated code?!? I'm going
       to have to re-write everything if I want some sort 
-      of order of operations system! (which I may do))
+      of order of operations system! (which I may do))_
    * Only handles 32 bit signed integers
-     (max values of **-2,147,483,648** to **2,147,483,647**)
+     _(max values of **-2,147,483,648** to **2,147,483,647**)_
    * No floats, only integer division is allowed
-     (this was on purpose, actually, since I created it
-      for a very specific project. This could change now)
+     _(this was on purpose, actually, since I created it
+      for a very specific project. This could change now)_
 
 ###Allowed operators
 
-**+** Addition  
-**-** Subtraction  
-**\*** Multiplication  
-**/** Division (integer division only!)  
+`+` Addition  
+`-` Subtraction  
+`*` Multiplication  
+`/` Division (integer division only!)  
 
 **parentheses** determine the order of operations  
 **spaces** between numbers and operators are ignored  
-	
-### Examples
 
-	1+2
-	_> 3_
-	1+(-2)*4/-2
-	_> 2_
+### Usage and Examples
 
-Press `CTRL+C` at any time to exit the program.
+It can be run in one of two ways, **command-line mode** and **interactive mode**.
+
+If any arguments are detected, it runs as **command-line mode**, treating all arguments as a calculator would. This output can be piped as you would with any other command.
+
+	$ eval-test 1 + 2
+	3
+	$ eval-test 1+(-20)*46/-2
+	437
+
+If no arguments are passed, it runs as **interactive mode**
+    
+	$ eval-test
+	Enter a calculation: 1+2
+	 > 3
+	Enter a calculation: 1+(-2)*4/-2
+	 > 2
+
+In interactive mode, press `CTRL+C` at any time to exit the program.
+
 
