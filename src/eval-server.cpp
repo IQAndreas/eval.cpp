@@ -32,6 +32,10 @@ int main(int argc, char *argv[]) {
 	// Used for debugging when displaying the error message
 	const int INPUT_LINE_LENGTH = 21;
 	
+	// Display the help message when first connecting
+	printHelpMessage(std::cout, true);
+	std::cout << std::endl;
+	
 	try {
 		
 		// Detect when the user presses CTRL+C on their keyboard

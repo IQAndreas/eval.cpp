@@ -7,16 +7,6 @@
 
 echo "New connection from $TCPREMOTEIP:$TCPREMOTEPORT ($TCPREMOTEHOST)" 1>&2;
 
-#BANNER=server/banner.txt
-BANNER=server/banner-small.txt
-
-# Show banner
-IFS=$'\n'
-for line in $(cat $BANNER)
-do
-	echo -e "$line";
-done
-
 mkdir -p server/logs;
 LOGFILE=server/logs/$(date +"%Y%m%d-%H%M%S-%N");
 
