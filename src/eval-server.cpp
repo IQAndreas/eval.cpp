@@ -41,10 +41,22 @@ int main(int argc, char *argv[]) {
 		while (getline(std::cin, input)) {
 			std::cout << INPUT_LINE_END;
 			
+			// Save what they entered to the log file
 			log << " > " << input << "\n"; // Don't flush it yet
-			int result = parseString<int>(input);
-			std::cout << OUTPUT_LINE << result << OUTPUT_LINE_END << std::endl;
-			log << result << std::endl;
+			
+			// Detect special commands
+			if (input == "") {
+				// No text entered
+				// Act the same way as Bash, and just show another empty line
+			}
+			else if ( input == "exit" || input == "quit") {
+				exit(EXIT_SUCCESS);
+			}
+			else {
+				// No special command entered. Parse the text that was entered as usual.
+				int result = parseString<int>(input);
+				std::cout << OUTPUT_LINE << result << OUTPUT_LINE_END << std::endl;
+			}
 			
 			// And all over again
 			std::cout << INPUT_LINE;

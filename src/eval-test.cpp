@@ -63,6 +63,7 @@ int commandLineMode(std::string input) {
 	
 	// If we made it this far, it means the value parsed and printed successfully!
 	exit(EXIT_SUCCESS);
+	
 }
 
 int interactiveMode() {
@@ -86,9 +87,20 @@ int interactiveMode() {
 			
 			std::cout << INPUT_LINE_END;
 			
-			int result = parseString<int>(input);
-			std::cout << OUTPUT_LINE << result << OUTPUT_LINE_END << std::endl;
-	
+			// Detect special commands
+			if (input == "") {
+				// No text entered
+				// Act the same way as Bash, and just show another empty line
+			}
+			else if ( input == "exit" || input == "quit") {
+				exit(EXIT_SUCCESS);
+			}
+			else {
+				// No special command entered. Parse the text that was entered as usual.
+				int result = parseString<int>(input);
+				std::cout << OUTPUT_LINE << result << OUTPUT_LINE_END << std::endl;
+			}
+			
 			// And all over again
 			std::cout << INPUT_LINE;
 		}
@@ -115,7 +127,7 @@ int interactiveMode() {
 void sigint(int sig) {
 	// Pressed CTRL+C. All good.
 	std::cout << std::endl;
-    exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 void unknownError() {
