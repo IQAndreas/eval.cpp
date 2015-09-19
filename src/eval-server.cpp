@@ -2,6 +2,7 @@
 #include <fstream>
 #include <signal.h>
 #include "eval.cpp"
+#include "eval-help.cpp"
 
 /* CONSTANTS */
 
@@ -48,6 +49,11 @@ int main(int argc, char *argv[]) {
 			if (input == "") {
 				// No text entered
 				// Act the same way as Bash, and just show another empty line
+			}
+			else if ( input == "help" ) {
+				printHelpMessage(std::cout, true);
+				// It looks better with an additional blank line after the message.
+				std::cout << std::endl;
 			}
 			else if ( input == "exit" || input == "quit") {
 				exit(EXIT_SUCCESS);

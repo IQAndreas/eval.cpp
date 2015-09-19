@@ -1,6 +1,7 @@
 #include <iostream>
 #include <signal.h>
 #include "eval.cpp"
+#include "eval-help.cpp"
 
 /* CONSTANTS */
 
@@ -19,6 +20,14 @@ void unknownError();
 /* CODE */
 
 int main(int argc, char *argv[]) {
+	
+	// First check for special commands
+	if (argc >= 2) {
+		if (argv[1] == std::string("--help")) {
+			printHelpMessage(std::cout, true);
+			exit(EXIT_SUCCESS);
+		}
+	}
 	
 	// Enter interactive mode if less than one argument is provided
 	//  (the first argument is the name of the command)
@@ -91,6 +100,11 @@ int interactiveMode() {
 			if (input == "") {
 				// No text entered
 				// Act the same way as Bash, and just show another empty line
+			}
+			else if ( input == "help" ) {
+				printHelpMessage(std::cout, true);
+				// It looks better with an additional blank line after the message.
+				std::cout << std::endl;
 			}
 			else if ( input == "exit" || input == "quit") {
 				exit(EXIT_SUCCESS);
