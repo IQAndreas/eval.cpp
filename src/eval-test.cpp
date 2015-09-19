@@ -48,15 +48,15 @@ int commandLineMode(std::string input) {
 	
 	} catch (ParseError& e) {
 		cerr << input << endl;
-		e.print(cerr, 0);
-		exit (e.id);
+		e.print(cerr, true, 0);
+		exit (e.getID());
 	} catch (MathError& e) {
 		cerr << input << endl;
-		e.print(cerr, 0);
-		exit (e.id);
+		e.print(cerr, true, 0);
+		exit (e.getID());
 	} catch (Error& e) {
-		e.print(cerr);
-		exit (e.id);
+		e.print(cerr, true);
+		exit (e.getID());
 	} catch (...) {
 		unknownError();
 		exit(EXIT_FAILURE);
@@ -95,14 +95,14 @@ int interactiveMode() {
 		}
 	
 	} catch (ParseError& e) {
-		e.print(cerr, INPUT_LINE_LENGTH);
-		exit (e.id);
+		e.print(cerr, true, INPUT_LINE_LENGTH);
+		exit (e.getID());
 	} catch (MathError& e) {
-		e.print(cerr, INPUT_LINE_LENGTH);
-		exit (e.id);
+		e.print(cerr, true, INPUT_LINE_LENGTH);
+		exit (e.getID());
 	} catch (Error& e) {
-		e.print(cerr);
-		exit (e.id);
+		e.print(cerr, true);
+		exit (e.getID());
 	} catch (...) {
 		unknownError();
 		exit(EXIT_FAILURE);

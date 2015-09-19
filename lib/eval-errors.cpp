@@ -1,67 +1,20 @@
 #include <ostream>
 #include <string>
+#include "error.cpp"
 
 const int UNKNOWN_ERROR = 1;
 const int ERROR = 2;
 const int PARSE_ERROR = 3;
 const int MATH_ERROR = 4;
 
-class Error {
-	protected:
-		std::string type = "Error";
-		
-	public:
-		int id;
-		std::string message;
-		
-		Error(std::string message) {
-			this->id = ERROR;
-			this->message = message;
-		}
-		Error(int id, std::string message) {
-			this->id = id;
-			this->message = message;
-		}
-		
-		virtual void print() {
-			std::cerr << this->message << std::endl;
-		}
-		virtual void print(std::ostream& out) {
-			out << this->message << std::endl;
-		}
-};
+class MathError : public IndexedError {
 
-//const char POINTER_CHAR = '^';
-const std::string POINTER_CHAR = "↑";
-const std::string NEWLINE = "\n    "; // If an error message continues on a second line
-
-class MathError : public Error {
 	public:
-		int index = -1;
-		MathError(int index, std::string message) : Error(MATH_ERROR, message) {
+		MathError(int index, std::string message) : IndexedError(MATH_ERROR, -1, index, message) {
 			this->type = "MathError";
-			this->index = index;
 		}
-		
-		virtual void print() {
-			this->print(std::cerr);
-		}
-		virtual void print(std::ostream& out) {
-			if (this->index >= 0) {
-				out << "\033[0;31m" << this->type << " at character #" << this->index + 1 << ": ";
-			} else {
-				out << "\033[0;31m" << this->type << ": ";
-			}
-			out << this->message << "\033[0m" << std::endl;
-		}
-		virtual void print(std::ostream& out, int headerLength) {
-			if (this->index >= 0) {
-				// Show a cursor right under the character in question
-				out << std::string(headerLength + this->index, ' ') << POINTER_CHAR << std::endl;
-			}
-			this->print(out);
-		}
-		
+	
+	// static constructors:
 		static MathError integerTooLarge(int index, std::string integerValue) {
 			return MathError(index, std::string() + "The number '" + integerValue + "' is much too big!");
 		}
@@ -77,33 +30,14 @@ class MathError : public Error {
 		}
 };
 
-class ParseError : public Error {
+class ParseError : public IndexedError {
+	
 	public:
-		int index;
-		ParseError(int index, std::string message) : Error(PARSE_ERROR, message) {
+		ParseError(int index, std::string message) : IndexedError(PARSE_ERROR, -1, index, message) {
 			this->type = "ParseError";
-			this->index = index;
 		}
 		
-		virtual void print() {
-			this->print(std::cerr);
-		}
-		virtual void print(std::ostream& out) {
-			if (this->index >= 0) {
-				out << "\033[0;31m" << this->type << " at character #" << this->index + 1 << ": ";
-			} else {
-				out << "\033[0;31m" << this->type << ": ";
-			}
-			out << this->message << "\033[0m" << std::endl;
-		}
-		virtual void print(std::ostream& out, int headerLength) {
-			if (this->index >= 0) {
-				// Show a cursor right under the character in question
-				out << std::string(headerLength + this->index, ' ') << POINTER_CHAR << std::endl;
-			}
-			this->print(out);
-		}
-		
+	// static constructors:
 		static ParseError noData(int index) {
 			return ParseError(index, std::string() + "No text to parse");
 		}

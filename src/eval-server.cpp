@@ -44,24 +44,24 @@ int main(int argc, char *argv[]) {
 			log << " > " << input << "\n"; // Don't flush it yet
 			int result = parseString<int>(input);
 			std::cout << OUTPUT_LINE << result << OUTPUT_LINE_END << std::endl;
-			log << "\033[0;32m" << result << "\033[0m" << std::endl;
+			log << result << std::endl;
 			
 			// And all over again
 			std::cout << INPUT_LINE;
 		}
 	
 	} catch (ParseError& e) {
-		e.print(log, 3);
-		e.print(std::cerr, INPUT_LINE_LENGTH);
-		exit (e.id);
+		e.print(log, false, 3);
+		e.print(std::cerr, true, INPUT_LINE_LENGTH);
+		exit (e.getID());
 	} catch (MathError& e) {
-		e.print(log, 3);
-		e.print(std::cerr, INPUT_LINE_LENGTH);
-		exit (e.id);
+		e.print(log, false, 3);
+		e.print(std::cerr, true, INPUT_LINE_LENGTH);
+		exit (e.getID());
 	} catch (Error& e) {
-		e.print(log);
-		e.print(std::cerr);
-		exit (e.id);
+		e.print(log, false);
+		e.print(std::cerr, true);
+		exit (e.getID());
 	} catch (...) {
 		log << "\033[0;31m!!!!!!!!!!!!!!! UNKNOWN ERROR !!!!!!!!!!!!!!!\033[0m" << std::endl;
 		unknownError();
