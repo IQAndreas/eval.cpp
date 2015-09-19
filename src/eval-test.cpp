@@ -1,7 +1,6 @@
 #include <iostream>
 #include <signal.h>
 #include "eval.cpp"
-using namespace std;
 
 /* CONSTANTS */
 
@@ -44,18 +43,18 @@ int commandLineMode(std::string input) {
 	try {
 		
 		int result = parseString<int>(input);
-		cout << result << endl;
+		std::cout << result << std::endl;
 	
 	} catch (ParseError& e) {
-		cerr << input << endl;
-		e.print(cerr, true, 0);
+		std::cerr << input << std::endl;
+		e.print(std::cerr, true, 0);
 		exit (e.getID());
 	} catch (MathError& e) {
-		cerr << input << endl;
-		e.print(cerr, true, 0);
+		std::cerr << input << std::endl;
+		e.print(std::cerr, true, 0);
 		exit (e.getID());
 	} catch (Error& e) {
-		e.print(cerr, true);
+		e.print(std::cerr, true);
 		exit (e.getID());
 	} catch (...) {
 		unknownError();
@@ -81,27 +80,27 @@ int interactiveMode() {
 		// Detect when the user presses CTRL+C on their keyboard
 		signal(SIGINT, sigint);
 		
-		cout << INPUT_LINE;
+		std::cout << INPUT_LINE;
 		std::string input = "";
-		while (getline(cin, input)) {
+		while (getline(std::cin, input)) {
 			
-			cout << INPUT_LINE_END;
+			std::cout << INPUT_LINE_END;
 			
 			int result = parseString<int>(input);
-			cout << OUTPUT_LINE << result << OUTPUT_LINE_END << endl;
+			std::cout << OUTPUT_LINE << result << OUTPUT_LINE_END << std::endl;
 	
 			// And all over again
-			cout << INPUT_LINE;
+			std::cout << INPUT_LINE;
 		}
 	
 	} catch (ParseError& e) {
-		e.print(cerr, true, INPUT_LINE_LENGTH);
+		e.print(std::cerr, true, INPUT_LINE_LENGTH);
 		exit (e.getID());
 	} catch (MathError& e) {
-		e.print(cerr, true, INPUT_LINE_LENGTH);
+		e.print(std::cerr, true, INPUT_LINE_LENGTH);
 		exit (e.getID());
 	} catch (Error& e) {
-		e.print(cerr, true);
+		e.print(std::cerr, true);
 		exit (e.getID());
 	} catch (...) {
 		unknownError();
@@ -115,16 +114,16 @@ int interactiveMode() {
 
 void sigint(int sig) {
 	// Pressed CTRL+C. All good.
-	cout << endl;
+	std::cout << std::endl;
     exit(EXIT_SUCCESS);
 }
 
 void unknownError() {
-	cerr << endl;
-	cerr << "Whoops, there was an unkown error; I have no idea what happened!" << endl;
-	cerr << "I would really appreciate it if you reported it to me, and let me know " << endl;
-	cerr << "what you did and how to reproduce it:" << endl;
-	cerr << "   * \033[4;36m" << PROJECT_URL << "\033[0m" << endl;
+	std::cerr << std::endl;
+	std::cerr << "Whoops, there was an unkown error; I have no idea what happened!" << std::endl;
+	std::cerr << "I would really appreciate it if you reported it to me, and let me know " << std::endl;
+	std::cerr << "what you did and how to reproduce it:" << std::endl;
+	std::cerr << "   * \033[4;36m" << PROJECT_URL << "\033[0m" << std::endl;
 }
 
 
